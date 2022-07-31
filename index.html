@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="./assets/card-base.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Codedamn - Quiz Project</title>
+
+    <script defer src="assets/systems/questions.js"></script>
+    <script defer src="assets/systems/navigationController.js"></script>
+    <script defer src="assets/systems/timer.js"></script>
+    <script defer src="assets/systems/App.js"></script>
+</head>
+
+<body>
+    <header>
+        <a id=leaderboard>View Highscores <i class="fas fa-hand-point-left fa-lg"></i>
+        </i></a>
+
+        <div>
+            Time:
+            <span id="timer-value">01:23</span>
+        </div>
+    </header>
+    <main>
+        <div class="card-base card-start" hidden>
+            <h1> Coding Quiz Challenge </h1>
+            <p> Try to answer to following code-related questions within the time limit.</p>
+            <p> Keep in mind that incorrect answers will penalize your score/time by ten seconds! </p>
+            <button> Start Quiz </button>
+        </div>
+
+        <div class="card-base card-quiz" hidden>
+            <h1> Commonly used data types DO NOT include: </h1>
+
+            <ul style="padding: 0.25rem">
+                <li><button class="expand">1. strings</button></li>
+                <li><button class="expand">2. booleans</button></li>
+                <li><button class="expand">3. alerts</button></li>
+                <li><button class="expand">4. numbers</button></li>
+            </ul>
+
+            <div class="answer-state">
+                <hr>
+
+                <p style="margin-top: 0.5rem">Incorrect!</p>
+            </div>
+        </div>
+
+        <div class="card-base card-final-results" hidden>
+            <h1> All done! </h1>
+            <p>Your final score is 40.</p>
+            <div>
+                Enter initials:
+                <input type="text" id="initials" style="width: 8ch">
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+
+        <div class="card-base card-highscores" hidden>
+            <h1> Highscores </h1>
+            <ol style="padding: 1rem">
+                <li> CD - 9 </li>
+                <li> JEFF - 420 </li>
+            </ol>
+
+            <div>
+                <button>Go Back</button>
+                <button>Clear Highscores</button>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

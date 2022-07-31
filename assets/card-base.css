@@ -1,0 +1,30 @@
+﻿.card-base {
+	border: 2px solid var(--gray);
+	border-radius: 1rem;
+
+	padding: 2rem;
+	box-shadow: var(--gray) 4px 2px 4px;
+}
+
+.card-base h1 {
+	font-size: larger;
+}
+
+.card-base button {
+	padding: 0.5rem;
+	border: none;
+	border-radius: 0.25rem;
+
+	color: white;
+	background-color: var(--green);
+}
+
+.card-base ul {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.card-base ul li {
+	list-style: none;
+}
