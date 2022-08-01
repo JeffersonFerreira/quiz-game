@@ -19,12 +19,13 @@
 	background-color: var(--green);
 }
 
-.card-base ul {
+.card-quiz .quiz-option-list {
 	display: flex;
 	flex-direction: column;
 	gap: 0.25rem;
 }
 
-.card-base ul li {
-	list-style: none;
+button.button-quiz {
+	text-align: left;
+	cursor: pointer;
 }
