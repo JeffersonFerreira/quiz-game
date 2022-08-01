@@ -1,14 +1,14 @@
 ﻿const timerLabel = document.querySelector("#timer-value")
 
 const timer = new Timer({
-    onTick: time => timerLabel.innerHTML = Timer.format(time),
-    onStop: () => handleGameTimeout()
+	onTick: time => timerLabel.innerHTML = Timer.format(time),
+	onStop: () => handleGameTimeout()
 })
 
 const navigation = new NavigationController();
 
 function handleGameTimeout() {
-    console.log("time fucking out...")
+	console.log("time fucking out...")
 }
 
 navigation.show(1)
@@ -16,4 +16,4 @@ navigation.show(1)
 
 const quizController = new QuizController()
 
-quizController.promptUser("This is a sample title", ["Option A", "Option B"], 2)
+quizController.promptUser("This is a sample title", ["Option A", "Shit", "Correct option"], 2)

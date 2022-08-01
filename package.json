@@ -1,0 +1,16 @@
+{
+  "name": "quiz_demo_app",
+  "version": "1.0.0",
+  "description": "![main image](https://raw.githubusercontent.com/codedamn-projects/quiz-app/master/images/startcard.png)",
+  "main": "index.js",
+  "scripts": {
+    "compile:watch": "tsc -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.7.4"
+  }
+}
