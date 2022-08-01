@@ -1,7 +1,4 @@
-﻿const timerLabel = document.querySelector("#timer-value")
-
-const timer = new Timer({
-	onTick: time => timerLabel.innerHTML = Timer.format(time),
+﻿const timer = new Timer({
 	onStop: () => handleGameTimeout()
 })
 
@@ -11,9 +8,27 @@ function handleGameTimeout() {
 	console.log("time fucking out...")
 }
 
-navigation.show(1)
+navigation.show(Page.Quiz)
 
 
-const quizController = new QuizController()
+const quizController = new QuizController({
+	onOptionSelected: ({isCorrect}) => {
+		if (isCorrect && hasNextQuestion()) {
+			nextQuestion()
+		}
+	}
+})
 
-quizController.promptUser("This is a sample title", ["Option A", "Shit", "Correct option"], 2)
+let questionIndex = -1;
+nextQuestion()
+
+function nextQuestion() {
+	const question = questions[++questionIndex];
+
+	const answerIndex = question.options.indexOf(question.answer);
+	quizController.promptUser(question.questionText, question.options, answerIndex)
+}
+
+function hasNextQuestion(){
+ return questionIndex + 1 < questions.length
+}

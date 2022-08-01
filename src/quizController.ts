@@ -1,5 +1,6 @@
-﻿interface QuizCallbackOptions {
-	onOptionSelected?: (optionIndex: number) => void
+﻿type OptionSelectedArgs = {optionIndex: number, isCorrect: boolean}
+interface QuizCallbackOptions {
+	onOptionSelected?: (args: OptionSelectedArgs) => void
 }
 
 class QuizController {
@@ -8,7 +9,7 @@ class QuizController {
 	private itemTemplate: HTMLTemplateElement;
 	private callbacks: QuizCallbackOptions
 
-	constructor(callbacks: QuizCallbackOptions) {
+	constructor(callbacks?: QuizCallbackOptions) {
 		this.callbacks = callbacks ?? {}
 		this.titleLabel = document.querySelector('.quiz-title')
 		this.optionList = document.querySelector('.quiz-option-list')
@@ -28,8 +29,10 @@ class QuizController {
 
 			element.innerHTML = options[i]
 			element.addEventListener('click', (e) => {
-				this.callbacks.onOptionSelected?.(i)
-				this.showIsAnswerIsValid(i == correctOptionIndex)
+				const isValid = i == correctOptionIndex;
+
+				this.callbacks.onOptionSelected?.({optionIndex: i, isCorrect: isValid})
+				this.showIsAnswerIsValid(isValid)
 			})
 		}
 	}
