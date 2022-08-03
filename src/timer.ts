@@ -6,6 +6,8 @@
 class Timer {
 	private readonly callbacks: TimerCallbackOptions;
 	private readonly timerLabel: Element;
+
+	private durationSec: number;
 	private intervalId: number;
 
 	constructor(callbacks: TimerCallbackOptions) {
@@ -14,19 +16,34 @@ class Timer {
 	}
 
 	start(durationSec: number) {
-		this.intervalId = setInterval(this._onTick, 1000)
+		this.durationSec = durationSec
+		this.intervalId = setInterval(this.onTick, 1000)
 	}
 
-	_onTick(durationSec: number) {
-		durationSec -= 1;
+	private onTick() {
+		this.reduce(1);
 
-		this.timerLabel.innerHTML = Timer.format(durationSec)
-		this.callbacks.onTick?.(durationSec)
+		this.timerLabel.innerHTML = Timer.format(this.durationSec)
+		this.callbacks.onTick?.(this.durationSec)
 
-		if (durationSec <= 0) {
-			clearInterval(this.intervalId)
-			this.callbacks.onStop?.()
+		if (this.durationSec <= 0) {
+			this.stop()
 		}
+	}
+
+	reduce(seconds: number) {
+		this.durationSec = Math.max(0, this.durationSec - seconds)
+	}
+
+	stop() {
+		clearInterval(this.intervalId)
+		this.callbacks.onStop?.()
+
+		this.intervalId = undefined
+	}
+
+	static resetUI() {
+		document.querySelector('#timer-value').innerHTML = ""
 	}
 
 	static format(time: number) {
