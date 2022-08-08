@@ -1,9 +1,13 @@
 ﻿{
   "compilerOptions": {
-    "outDir": "./dist/systems",
     "allowJs": true,
-    "target": "ES6"
+    "target": "ES6",
+    "module": "AMD",
+    "sourceMap": true,
+    "outFile": "dist/app.js"
   },
-  "include": ["./src"],
+  "include": [
+    "./src"
+  ],
   "compileOnSave": true
 }

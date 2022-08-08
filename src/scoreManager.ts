@@ -2,7 +2,7 @@
 
 type Score = { name: string, value: number }
 
-class ScoreManager {
+export default class ScoreManager {
 	private scoreList: Score[];
 
 	constructor() {

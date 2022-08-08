@@ -1,5 +1,13 @@
-﻿Timer.resetUI()
+﻿import {questions} from "./questions";
+
+import Timer from "./timer";
+import QuizController from "./quizController";
+import NavigationController, {Page} from "./navigationController";
+
+Timer.resetUI()
 const navigation = new NavigationController();
+
+stateQuizGame(undefined, undefined)
 
 // stateInit(null)
 // stateQuizGame(() => {

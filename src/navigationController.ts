@@ -1,8 +1,8 @@
-﻿enum Page {
+﻿export enum Page {
 	Start, Quiz, GameOver, Highscores
 }
 
-class NavigationController {
+export default class NavigationController {
 	private readonly cardQuiz: Element;
 	private readonly cardStart: Element;
 	private readonly cardHighscores: Element;

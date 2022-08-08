@@ -3,7 +3,7 @@
 	onStop?: () => void
 }
 
-class Timer {
+export default class Timer {
 	private readonly callbacks: TimerCallbackOptions;
 	private readonly timerLabel: Element;
 
@@ -17,22 +17,21 @@ class Timer {
 
 	start(durationSec: number) {
 		this.durationSec = durationSec
-		this.intervalId = setInterval(this.onTick, 1000)
-	}
 
-	private onTick() {
-		this.reduce(1);
-
-		this.timerLabel.innerHTML = Timer.format(this.durationSec)
-		this.callbacks.onTick?.(this.durationSec)
-
-		if (this.durationSec <= 0) {
-			this.stop()
-		}
+		const handler = () => {
+			this.reduce(1);
+			this.callbacks.onTick?.(this.durationSec)
+            this.draw()
+			if (this.durationSec <= 0) {
+				this.stop()
+			}
+		};
+		this.intervalId = window.setInterval( handler, 1000)
 	}
 
 	reduce(seconds: number) {
 		this.durationSec = Math.max(0, this.durationSec - seconds)
+        this.draw()
 	}
 
 	stop() {
@@ -42,13 +41,17 @@ class Timer {
 		this.intervalId = undefined
 	}
 
+	draw() {
+        this.timerLabel.innerHTML = Timer.format(this.durationSec)
+	}
+
 	static resetUI() {
 		document.querySelector('#timer-value').innerHTML = ""
 	}
 
 	static format(time: number) {
-		const minutes = time / 60
-		const seconds = time - (minutes * 60)
+		const minutes = parseInt((time / 60).toString())
+		const seconds = parseInt((time - (minutes * 60)).toString())
 
 		let minString = minutes.toString();
 		let secString = seconds.toString();

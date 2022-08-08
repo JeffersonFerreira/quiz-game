@@ -3,7 +3,7 @@ interface QuizCallbackOptions {
 	onOptionSelected?: (args: OptionSelectedArgs) => void
 }
 
-class QuizController {
+export default class QuizController {
 	private titleLabel: Element;
 	private optionList: Element;
 	private itemTemplate: HTMLTemplateElement;
