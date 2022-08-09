@@ -16,22 +16,24 @@ export default class Timer {
 	}
 
 	start(durationSec: number) {
-		this.durationSec = durationSec
-
 		const handler = () => {
 			this.reduce(1);
 			this.callbacks.onTick?.(this.durationSec)
-            this.draw()
+			this.draw()
+
 			if (this.durationSec <= 0) {
 				this.stop()
 			}
 		};
-		this.intervalId = window.setInterval( handler, 1000)
+
+		this.durationSec = durationSec
+		this.intervalId = window.setInterval(handler, 1000)
+		this.draw()
 	}
 
 	reduce(seconds: number) {
 		this.durationSec = Math.max(0, this.durationSec - seconds)
-        this.draw()
+		this.draw()
 	}
 
 	stop() {
@@ -42,7 +44,7 @@ export default class Timer {
 	}
 
 	draw() {
-        this.timerLabel.innerHTML = Timer.format(this.durationSec)
+		this.timerLabel.innerHTML = Timer.format(this.durationSec)
 	}
 
 	static resetUI() {

@@ -54,24 +54,28 @@
 
 	<div class="card-base card-final-results" hidden>
 		<h1> All done! </h1>
-		<p>Your final score is 40.</p>
-		<div>
-			Enter initials:
-			<input type="text" id="initials" style="width: 8ch">
+		<p>Your final score is <span id="user-score">40</span>.</p>
+		<form>
+			<label for="initials">Enter initials:</label>
+			<input id="initials" name="initials" type="text" maxlength="3" style="width: 8ch; text-align: center">
 			<button type="submit">Submit</button>
-		</div>
+		</form>
 	</div>
 
-	<div class="card-base card-highscores" hidden>
+	<div class="card-base card-scoreboard" hidden>
 		<h1> Highscores </h1>
-		<ol style="padding: 1rem">
+		<ol class="item-list" style="padding: 1rem">
 			<li> CD - 9</li>
 			<li> JEFF - 420</li>
 		</ol>
 
+		<template id="scoreboard-item-template">
+			<li> JEFF - 420 </li>
+		</template>
+
 		<div>
-			<button>Go Back</button>
-			<button>Clear Highscores</button>
+			<button class="button-close">Go Back</button>
+			<button class="button-clear">Clear Highscores</button>
 		</div>
 	</div>
 </main>

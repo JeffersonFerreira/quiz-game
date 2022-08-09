@@ -3,20 +3,40 @@
 import Timer from "./timer";
 import QuizController from "./quizController";
 import NavigationController, {Page} from "./navigationController";
+import ScoreManager from "./scoreManager";
+
+type Callback<T = any> = (args?: T) => void
 
 Timer.resetUI()
+const scoreManager = new ScoreManager();
 const navigation = new NavigationController();
+
+document
+	.querySelector("#leaderboard")
+	.addEventListener("click", () => {
+		scoreManager.show()
+	})
 
 stateQuizGame(undefined, undefined)
 
-// stateInit(null)
+// stateInit(() => {
+// 	stateQuizGame(() => {
+// 			navigation.show(Page.GameLose)
+// 		},
+// 		() => {
+// 			navigation.show(Page.GameLose)
+// 		}
+// 	)
+// })
+
+
 // stateQuizGame(() => {
 // 	console.log("Quiz game completed")
 // }, () => {
 // 	console.log("Quiz game failed")
 // })
 
-function stateInit(next) {
+function stateInit(next: Callback) {
 	navigation.show(Page.Start)
 	const startQuizButton = document.querySelector<HTMLButtonElement>('#button-start-quiz');
 
@@ -27,7 +47,7 @@ function stateInit(next) {
 	}
 }
 
-function stateQuizGame(next, onFail) {
+function stateQuizGame(next: Callback, onFail: Callback) {
 	navigation.show(Page.Quiz)
 
 	let questionIndex = -1;
@@ -51,11 +71,9 @@ function stateQuizGame(next, onFail) {
 	function onOptionSelected({isCorrect}) {
 		if (!isCorrect) {
 			timer.reduce(10)
-		}
-		else if (hasNextQuestion()) {
+		} else if (hasNextQuestion()) {
 			nextQuestion()
-		}
-		else {
+		} else {
 			next()
 		}
 	}
