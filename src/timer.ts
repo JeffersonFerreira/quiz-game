@@ -1,4 +1,4 @@
-﻿interface TimerCallbackOptions {
+﻿interface Callbacks {
 	onTick?: (totalSecondsRemain: number) => void
 	onStop?: () => void
 }
@@ -8,14 +8,18 @@ export default class Timer {
 		return !!this.intervalId
 	}
 
-	private readonly callbacks: TimerCallbackOptions;
+	get seconds() {
+		return this._seconds
+	}
+
+	readonly callbacks: Callbacks = {}
+
 	private readonly timerLabel: Element;
 
-	private durationSec: number;
+	private _seconds: number;
 	private intervalId: number;
 
-	constructor(callbacks: TimerCallbackOptions) {
-		this.callbacks = callbacks
+	constructor() {
 		this.timerLabel = document.querySelector("#timer-value")
 	}
 
@@ -25,20 +29,20 @@ export default class Timer {
 				return
 
 			this.reduce(1);
-			this.callbacks.onTick?.(this.durationSec)
+			this.callbacks.onTick?.(this._seconds)
 
-			if (this.durationSec <= 0) {
+			if (this._seconds <= 0) {
 				this.stop()
 			}
 		};
 
-		this.durationSec = durationSec
+		this._seconds = durationSec
 		this.intervalId = window.setInterval(handler, 1000)
 		this.draw()
 	}
 
 	reduce(seconds: number) {
-		this.durationSec = Math.max(0, this.durationSec - seconds)
+		this._seconds = Math.max(0, this._seconds - seconds)
 		this.draw()
 	}
 
@@ -52,11 +56,11 @@ export default class Timer {
 	}
 
 	draw() {
-		this.timerLabel.innerHTML = Timer.format(this.durationSec)
+		this.timerLabel.innerHTML = Timer.format(this._seconds)
 	}
 
-	static resetUI() {
-		document.querySelector('#timer-value').innerHTML = ""
+	resetUI() {
+		this.timerLabel.innerHTML = ''
 	}
 
 	static format(time: number) {

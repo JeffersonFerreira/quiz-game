@@ -1,6 +1,7 @@
 ﻿const KEY = "scoreboard";
 
 type Score = { name: string, value: number }
+
 interface Callbacks {
 	onVisibilityChanged?: (isVisible) => void
 }
@@ -9,6 +10,10 @@ export default class ScoreboardManager {
 
 	get isVisible() {
 		return !this.cardScoreboard.hasAttribute("hidden")
+	}
+
+	get scores(): Readonly<Score[]> {
+		return this.scoreList
 	}
 
 	readonly callbacks: Callbacks
@@ -50,18 +55,21 @@ export default class ScoreboardManager {
 	add(score: Score) {
 		this.scoreList.push(score)
 		this.save()
-	}
-
-	getScores(): Readonly<Score[]> {
-		return this.scoreList
+		this.draw()
 	}
 
 	reset() {
-		this.scoreList.splice(0)
-		localStorage.removeItem(KEY)
+		const confirm = window.confirm("Clear scoreboard can not be undone, are you sure?")
+
+		if (confirm) {
+			this.scoreList.splice(0)
+			localStorage.removeItem(KEY)
+
+			this.draw()
+		}
 	}
 
-	draw() {
+	private draw() {
 		const list: HTMLOListElement = document.querySelector(".card-scoreboard .item-list")
 		const template: HTMLTemplateElement = document.querySelector('#scoreboard-item-template')
 
@@ -69,7 +77,7 @@ export default class ScoreboardManager {
 		list.replaceChildren()
 
 		// Draw
-		this.getScores()
+		this.scores
 			.slice()
 			.sort((a, b) => b.value > a.value ? 1 : -1)
 			.forEach(({name, value}) => {
@@ -78,7 +86,7 @@ export default class ScoreboardManager {
 			})
 	}
 
-	save() {
+	private save() {
 		const scoreJson = JSON.stringify(this.scoreList)
 		localStorage.setItem(KEY, scoreJson)
 	}

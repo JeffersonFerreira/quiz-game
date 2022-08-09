@@ -10,7 +10,10 @@ type Callback = () => void
 type Dispose = Callback | void
 type GameState = (next?: Callback, fail?: Callback) => Dispose
 
-Timer.resetUI()
+const GAME_DURATION = 50
+const GAME_INVALID_OPTION_PENALTY = 10
+
+const timer = new Timer()
 const scoreboardManager = new ScoreboardManager();
 const navigation = new NavigationController(scoreboardManager);
 const setScoreController = new SetScoreController(scoreboardManager)
@@ -28,11 +31,10 @@ const gameStates: Record<string, GameState> = {
 		navigation.show(Page.Quiz)
 
 		let questionIndex = -1;
-		const timer = new Timer({onStop: next})
 		const quizController = new QuizController({onOptionSelected})
 
 		nextQuestion()
-		timer.start(50)
+		timer.start(GAME_DURATION)
 
 		function hasNextQuestion() {
 			return questionIndex + 1 < questions.length
@@ -47,7 +49,7 @@ const gameStates: Record<string, GameState> = {
 
 		function onOptionSelected({isCorrect}) {
 			if (!isCorrect) {
-				timer.reduce(10)
+				timer.reduce(GAME_INVALID_OPTION_PENALTY)
 			} else if (hasNextQuestion()) {
 				nextQuestion()
 			} else {
@@ -58,7 +60,7 @@ const gameStates: Record<string, GameState> = {
 		return () => timer.stop()
 	},
 	setScore: next => {
-		setScoreController.setUserScore(42)
+		setScoreController.setUserScore(parseInt((timer.seconds * 10 * Math.PI).toString()))
 		navigation.show(Page.SetScore)
 
 		setScoreController.callbacks.onSubmit = () => next()
@@ -76,8 +78,11 @@ let disposeState: Dispose = undefined
 const showScoreboardButton = document.querySelector<HTMLButtonElement>("#leaderboard")
 
 startGame()
+
 function startGame(){
+	timer.resetUI()
 	stateIndex = -1;
+
 	nextState()
 }
 
