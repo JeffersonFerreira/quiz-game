@@ -43,7 +43,7 @@ export default class ScoreboardManager {
 	hide() {
 		if (this.isVisible) {
 			this.cardScoreboard.setAttribute("hidden", "true")
-			this.callbacks.onVisibilityChanged?.(true)
+			this.callbacks.onVisibilityChanged?.(false)
 		}
 	}
 
