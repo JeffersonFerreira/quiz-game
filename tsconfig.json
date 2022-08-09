@@ -4,7 +4,7 @@
     "target": "ES6",
     "module": "AMD",
     "sourceMap": true,
-    "outFile": "dist/app.js"
+    "outFile": "dist/app.js",
   },
   "include": [
     "./src"

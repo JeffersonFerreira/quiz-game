@@ -3,86 +3,119 @@
 import Timer from "./timer";
 import QuizController from "./quizController";
 import NavigationController, {Page} from "./navigationController";
-import ScoreManager from "./scoreManager";
+import ScoreboardManager from "./scoreboardManager";
+import SetScoreController from "./SetScoreController";
 
-type Callback<T = any> = (args?: T) => void
+type Callback = () => void
+type Dispose = Callback | void
+type GameState = (next?: Callback, fail?: Callback) => Dispose
 
 Timer.resetUI()
-const scoreManager = new ScoreManager();
-const navigation = new NavigationController();
+const scoreboardManager = new ScoreboardManager();
+const navigation = new NavigationController(scoreboardManager);
+const setScoreController = new SetScoreController(scoreboardManager)
 
-document
-	.querySelector("#leaderboard")
-	.addEventListener("click", () => {
-		scoreManager.show()
-	})
+const showScoreboardButton = document.querySelector<HTMLButtonElement>("#leaderboard")
 
-stateQuizGame(undefined, undefined)
+// showScoreboardButton.toggleAttribute("disabled", true)
 
+// let gameStated = false
+//
+// document
+// 	.querySelector("#leaderboard")
+// 	.addEventListener("click", () => {
+// 		if (!gameStated)
+// 			leaderboard.show()
+// 	})
+//
 // stateInit(() => {
+// 	gameStated = true
 // 	stateQuizGame(() => {
-// 			navigation.show(Page.GameLose)
+// 			navigation.show(Page.FinalResults)
 // 		},
 // 		() => {
-// 			navigation.show(Page.GameLose)
+// 			navigation.show(Page.FinalResults)
 // 		}
 // 	)
 // })
 
 
-// stateQuizGame(() => {
-// 	console.log("Quiz game completed")
-// }, () => {
-// 	console.log("Quiz game failed")
-// })
+const gameStates: Record<string, GameState> = {
+	init: (next) => {
+		navigation.show(Page.Start)
+		const startQuizButton = document.querySelector<HTMLButtonElement>('#button-start-quiz');
 
-function stateInit(next: Callback) {
-	navigation.show(Page.Start)
-	const startQuizButton = document.querySelector<HTMLButtonElement>('#button-start-quiz');
+		startQuizButton.addEventListener('click', next)
 
-	startQuizButton.addEventListener('click', next)
+		return () => startQuizButton.removeEventListener('click', next)
+	},
+	game: (next) => {
+		navigation.show(Page.Quiz)
 
-	return () => {
-		startQuizButton.removeEventListener('click', next)
-	}
-}
+		let questionIndex = -1;
+		const timer = new Timer({onStop: next})
+		const quizController = new QuizController({onOptionSelected})
 
-function stateQuizGame(next: Callback, onFail: Callback) {
-	navigation.show(Page.Quiz)
+		nextQuestion()
+		timer.start(50)
 
-	let questionIndex = -1;
-	const timer = new Timer({onStop: onFail})
-	const quizController = new QuizController({onOptionSelected})
-
-	nextQuestion()
-	timer.start(120)
-
-	function hasNextQuestion() {
-		return questionIndex + 1 < questions.length
-	}
-
-	function nextQuestion() {
-		const question = questions[++questionIndex];
-
-		const answerIndex = question.options.indexOf(question.answer);
-		quizController.promptUser(question.questionText, question.options, answerIndex)
-	}
-
-	function onOptionSelected({isCorrect}) {
-		if (!isCorrect) {
-			timer.reduce(10)
-		} else if (hasNextQuestion()) {
-			nextQuestion()
-		} else {
-			next()
+		function hasNextQuestion() {
+			return questionIndex + 1 < questions.length
 		}
-	}
 
-	return () => {
-		timer.stop()
+		function nextQuestion() {
+			const question = questions[++questionIndex];
+
+			const answerIndex = question.options.indexOf(question.answer);
+			quizController.promptUser(question.questionText, question.options, answerIndex)
+		}
+
+		function onOptionSelected({isCorrect}) {
+			if (!isCorrect) {
+				timer.reduce(10)
+			} else if (hasNextQuestion()) {
+				nextQuestion()
+			} else {
+				next()
+			}
+		}
+
+		return () => timer.stop()
+	},
+	setScore: next => {
+		setScoreController.setUserScore(42)
+		navigation.show(Page.SetScore)
+
+		setScoreController.callbacks.onSubmit = () => next()
+		return () => {
+			setScoreController.callbacks.onSubmit = undefined
+		}
+	},
+	leaderboard: (next) => {
+		navigation.show(Page.Leaderboard)
 	}
 }
 
-function stateGameOver(next) {
+let stateIndex = 1
+let dispose: Dispose = undefined
 
+function nextState() {
+	const keys = Object.keys(gameStates);
+	const stateKey = keys[++stateIndex % keys.length]
+
+	const newState = gameStates[stateKey];
+
+	if (dispose)
+		dispose()
+
+	dispose = newState(nextState)
 }
+
+nextState()
+
+// showScoreboardButton.addEventListener("click", () => {
+// 	if (!leaderboard.isVisible)
+// 		leaderboard.show()
+// 	else
+// 		leaderboard.hide()
+// })

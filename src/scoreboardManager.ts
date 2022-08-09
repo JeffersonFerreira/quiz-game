@@ -3,16 +3,15 @@
 type Score = { name: string, value: number }
 interface Callbacks {
 	onVisibilityChanged?: (isVisible) => void
-	onClear?: () => void
 }
 
-export default class ScoreManager {
+export default class ScoreboardManager {
 
 	get isVisible() {
 		return !this.cardScoreboard.hasAttribute("hidden")
 	}
 
-	readonly callbacks?: Callbacks
+	readonly callbacks: Callbacks
 
 	private scoreList: Score[];
 	private cardScoreboard: Element;
@@ -21,7 +20,8 @@ export default class ScoreManager {
 	private closeButton: HTMLButtonElement
 
 	constructor() {
-		this.scoreList = []
+		this.callbacks = {}
+		this.scoreList = this.load()
 
 		this.cardScoreboard = document.querySelector(".card-scoreboard")
 		this.clearButton = document.querySelector(".card-scoreboard .button-clear")
@@ -29,21 +29,21 @@ export default class ScoreManager {
 
 		this.closeButton.addEventListener("click", () => this.hide())
 		this.clearButton.addEventListener("click", () => this.reset())
-
-		this.load()
-		this.show()
 	}
 
 	show() {
 		if (!this.isVisible) {
 			this.cardScoreboard.removeAttribute("hidden")
+
 			this.draw()
+			this.callbacks.onVisibilityChanged?.(true)
 		}
 	}
 
 	hide() {
 		if (this.isVisible) {
 			this.cardScoreboard.setAttribute("hidden", "true")
+			this.callbacks.onVisibilityChanged?.(true)
 		}
 	}
 
@@ -83,11 +83,11 @@ export default class ScoreManager {
 		localStorage.setItem(KEY, scoreJson)
 	}
 
-	load() {
+	private load() {
 		const scoreJson = localStorage.getItem(KEY);
 
-		if (scoreJson) {
-			this.scoreList = JSON.parse(scoreJson)
-		}
+		return scoreJson
+			? JSON.parse(scoreJson)
+			: []
 	}
 }

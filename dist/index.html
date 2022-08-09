@@ -12,12 +12,33 @@
 
 <!--	<script defer src="app.js"></script>-->
 	<script data-main="app" src="require.js"></script>
+
+	<style>
+		#leaderboard {
+			border: none;
+			color: white;
+			background: none;
+    }
+
+    #leaderboard:not(:disabled) {
+			cursor: pointer;
+
+			padding: 0.5rem;
+			outline: 2px solid #DBDEE6;
+			border-radius: 2rem;
+    }
+
+		#leaderboard:hover:not(:disabled) {
+			outline-color: #205896;
+		}
+	</style>
 </head>
 
 <body>
 <header>
-	<a id=leaderboard>View Highscores <i class="fas fa-hand-point-left fa-lg"></i>
-		</i></a>
+	<button id="leaderboard">
+		View Highscores <i class="fas fa-hand-point-left fa-lg"></i>
+	</button>
 
 	<div>
 		Time:
@@ -55,7 +76,7 @@
 	<div class="card-base card-final-results" hidden>
 		<h1> All done! </h1>
 		<p>Your final score is <span id="user-score">40</span>.</p>
-		<form>
+		<form name="scoreboard">
 			<label for="initials">Enter initials:</label>
 			<input id="initials" name="initials" type="text" maxlength="3" style="width: 8ch; text-align: center">
 			<button type="submit">Submit</button>

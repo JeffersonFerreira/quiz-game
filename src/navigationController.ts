@@ -1,28 +1,29 @@
-﻿import ScoreManager from "./scoreManager";
+﻿import ScoreboardManager from "./scoreboardManager";
 
 export enum Page {
-	Start, Quiz, FinalResults, Leaderboard
+	Start, Quiz, SetScore, Leaderboard
 }
 
 export default class NavigationController {
 	private readonly cardQuiz: Element;
 	private readonly cardStart: Element;
-	private readonly cardScoreboard: Element;
-	private readonly cardFinalResults: Element;
+	private readonly cardSetScore: Element;
 
-	constructor() {
+	private readonly leaderboard: ScoreboardManager;
+
+	constructor(leaderboard: ScoreboardManager) {
+		this.leaderboard = leaderboard
+
 		this.cardQuiz = document.querySelector(".card-quiz")
 		this.cardStart = document.querySelector(".card-start")
-		this.cardScoreboard = document.querySelector(".card-scoreboard")
-		this.cardFinalResults = document.querySelector(".card-scoreboard")
+		this.cardSetScore = document.querySelector(".card-final-results")
 	}
 
-	getElements() {
+	private getElements() {
 		return [
 			this.cardQuiz,
 			this.cardStart,
-			this.cardScoreboard,
-			this.cardFinalResults
+			this.cardSetScore
 		]
 	}
 
@@ -30,12 +31,19 @@ export default class NavigationController {
 		switch (page) {
 			case Page.Quiz:       	this.setVisibility(this.cardQuiz);         break;
 			case Page.Start:      	this.setVisibility(this.cardStart);        break;
-			case Page.Leaderboard: 	this.setVisibility(this.cardScoreboard);   break;
-			case Page.FinalResults: this.setVisibility(this.cardFinalResults); break;
+			case Page.SetScore:			this.setVisibility(this.cardSetScore);		 break;
+
+			case Page.Leaderboard: {
+				this.setVisibility(null)
+				this.leaderboard.show()
+				break
+			}
 		}
 	}
 
-	private setVisibility(element: Element) {
+	private setVisibility(element?: Element) {
+		this.leaderboard.hide()
+
 		this.getElements()
 			.forEach(el => {
 				if (element === el)
