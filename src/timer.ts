@@ -4,6 +4,10 @@
 }
 
 export default class Timer {
+	get isTicking(): boolean {
+		return !!this.intervalId
+	}
+
 	private readonly callbacks: TimerCallbackOptions;
 	private readonly timerLabel: Element;
 
@@ -17,9 +21,11 @@ export default class Timer {
 
 	start(durationSec: number) {
 		const handler = () => {
+			if (!this.intervalId)
+				return
+
 			this.reduce(1);
 			this.callbacks.onTick?.(this.durationSec)
-			this.draw()
 
 			if (this.durationSec <= 0) {
 				this.stop()
@@ -37,10 +43,12 @@ export default class Timer {
 	}
 
 	stop() {
-		clearInterval(this.intervalId)
-		this.callbacks.onStop?.()
+		if (!this.isTicking)
+			return
 
+		window.clearInterval(this.intervalId)
 		this.intervalId = undefined
+		this.callbacks.onStop?.()
 	}
 
 	draw() {
