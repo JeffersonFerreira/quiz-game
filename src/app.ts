@@ -15,31 +15,6 @@ const scoreboardManager = new ScoreboardManager();
 const navigation = new NavigationController(scoreboardManager);
 const setScoreController = new SetScoreController(scoreboardManager)
 
-const showScoreboardButton = document.querySelector<HTMLButtonElement>("#leaderboard")
-
-// showScoreboardButton.toggleAttribute("disabled", true)
-
-// let gameStated = false
-//
-// document
-// 	.querySelector("#leaderboard")
-// 	.addEventListener("click", () => {
-// 		if (!gameStated)
-// 			leaderboard.show()
-// 	})
-//
-// stateInit(() => {
-// 	gameStated = true
-// 	stateQuizGame(() => {
-// 			navigation.show(Page.FinalResults)
-// 		},
-// 		() => {
-// 			navigation.show(Page.FinalResults)
-// 		}
-// 	)
-// })
-
-
 const gameStates: Record<string, GameState> = {
 	init: (next) => {
 		navigation.show(Page.Start)
@@ -96,26 +71,40 @@ const gameStates: Record<string, GameState> = {
 	}
 }
 
-let stateIndex = 1
-let dispose: Dispose = undefined
+let stateIndex = -1
+let disposeState: Dispose = undefined
+const showScoreboardButton = document.querySelector<HTMLButtonElement>("#leaderboard")
 
-function nextState() {
-	const keys = Object.keys(gameStates);
-	const stateKey = keys[++stateIndex % keys.length]
-
-	const newState = gameStates[stateKey];
-
-	if (dispose)
-		dispose()
-
-	dispose = newState(nextState)
+startGame()
+function startGame(){
+	stateIndex = -1;
+	nextState()
 }
 
-nextState()
+function nextState() {
+	const keys = Object.keys(gameStates)
 
-// showScoreboardButton.addEventListener("click", () => {
-// 	if (!leaderboard.isVisible)
-// 		leaderboard.show()
-// 	else
-// 		leaderboard.hide()
-// })
+	const nextStateIndex = stateIndex + 1
+	const stateKey = keys[nextStateIndex % keys.length]
+
+	const isFirst = nextStateIndex % keys.length === 0
+	const newState = gameStates[stateKey];
+
+	if (disposeState)
+		disposeState()
+
+	if (isFirst)
+		showScoreboardButton.removeAttribute("disabled")
+	else
+		showScoreboardButton.setAttribute("disabled", "true")
+
+	stateIndex = nextStateIndex
+	disposeState = newState(nextState)
+}
+
+scoreboardManager.callbacks.onVisibilityChanged = isVisible => {
+	if (!isVisible)
+		startGame()
+}
+
+showScoreboardButton.addEventListener("click", () => navigation.show(Page.Leaderboard))
